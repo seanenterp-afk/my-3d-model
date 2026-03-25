@@ -68,7 +68,8 @@
 
   var TEXTURES = [ "", "", "", "" ];
 
-  var SCALE = 0.7;
+  // Bigger scale
+  var SCALE = 1.0;
   // ────────────────────────────────────────────────────────────
 
   // ── Star background ──────────────────────────────────────────
@@ -179,23 +180,24 @@
   resizeRenderer();
   window.addEventListener("resize", resizeRenderer);
 
-  // ── Compute planet X positions to fill visible width ─────────
-  // At z=6.2 with FOV=30, visible half-width = tan(FOV/2) * z * aspect
+  // ── Compute positions — tighter spacing ──────────────────────
   function getVisibleWidth() {
     var fovRad = 30 * Math.PI / 180;
     var halfH  = Math.tan(fovRad / 2) * 6.2;
     var aspect = window.innerWidth / window.innerHeight;
-    return halfH * aspect * 2; // full visible width in world units
+    return halfH * aspect * 2;
   }
 
   var positionsX = [0, 0, 0, 0];
 
   function updatePositions() {
     var vw      = getVisibleWidth();
-    var padding = vw * 0.08; // 8% padding each side
+    // Reduced padding from 8% to 3% — planets closer to edges
+    var padding = vw * 0.03;
     var usable  = vw - padding * 2;
-    var step    = usable / 3; // 4 planets = 3 gaps
-    var startX  = -usable / 2;
+    // Tighter gap — multiply step by 0.75 to bunch planets closer
+    var step    = (usable / 3) * 0.75;
+    var startX  = -(step * 1.5);
     for (var i = 0; i < 4; i++) {
       positionsX[i] = startX + step * i;
       if (planets[i]) planets[i].posX = positionsX[i];

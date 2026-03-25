@@ -68,8 +68,7 @@
 
   var TEXTURES = [ "", "", "", "" ];
 
-  var POSITIONS_X = [-2.4, -0.8, 0.8, 2.4];
-  var SCALE       = 0.7;
+  var SCALE = 0.7;
   // ────────────────────────────────────────────────────────────
 
   // ── Star background ──────────────────────────────────────────
@@ -145,7 +144,7 @@
   resizeBg();
   makeStars();
   drawBg();
-  window.addEventListener("resize", function() { resizeBg(); makeStars(); });
+  window.addEventListener("resize", function() { resizeBg(); makeStars(); updatePositions(); });
 
   // ── Cursor ───────────────────────────────────────────────────
   var cursorEl = document.getElementById("cursor");
@@ -168,9 +167,7 @@
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.outputEncoding = THREE.sRGBEncoding;
 
-  var scene = new THREE.Scene();
-
-  // z: 6.2 — sweet spot between 5.0 (too close) and 7.5 (too far)
+  var scene  = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 200);
   camera.position.z = 6.2;
 
@@ -181,6 +178,29 @@
   }
   resizeRenderer();
   window.addEventListener("resize", resizeRenderer);
+
+  // ── Compute planet X positions to fill visible width ─────────
+  // At z=6.2 with FOV=30, visible half-width = tan(FOV/2) * z * aspect
+  function getVisibleWidth() {
+    var fovRad = 30 * Math.PI / 180;
+    var halfH  = Math.tan(fovRad / 2) * 6.2;
+    var aspect = window.innerWidth / window.innerHeight;
+    return halfH * aspect * 2; // full visible width in world units
+  }
+
+  var positionsX = [0, 0, 0, 0];
+
+  function updatePositions() {
+    var vw      = getVisibleWidth();
+    var padding = vw * 0.08; // 8% padding each side
+    var usable  = vw - padding * 2;
+    var step    = usable / 3; // 4 planets = 3 gaps
+    var startX  = -usable / 2;
+    for (var i = 0; i < 4; i++) {
+      positionsX[i] = startX + step * i;
+      if (planets[i]) planets[i].posX = positionsX[i];
+    }
+  }
 
   // ── Lighting ─────────────────────────────────────────────────
   var key = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -213,7 +233,7 @@
       attractY:    0,
       isDragging:  false,
       bobPhase:    index * (Math.PI / 2),
-      posX:        POSITIONS_X[index]
+      posX:        positionsX[index]
     };
 
     var loader = new THREE.GLTFLoader();
@@ -384,6 +404,7 @@
   var script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js";
   script.onload = function() {
+    updatePositions();
     for (var i = 0; i < MODELS.length; i++) {
       createPlanet(i, MODELS[i], TEXTURES[i]);
     }

@@ -87,9 +87,9 @@
 </head>
 <body>
 <div class="wrap">
+  <div class="stars"></div>
   <div class="page active" id="page1">
     <div class="left-panel">
-      <div class="stars"></div>
       <div class="glow-ring"></div>
       <canvas id="modelCanvas"></canvas>
       <div class="zoom-hint">scroll to zoom · drag to rotate</div>
@@ -164,7 +164,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
-  var WEB3FORMS_KEY='ab6f3dc8-f0a0-4089-8df8-7bcb430975b3';
+  var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxdCjOodxl7ja68Wmive9gu-UvIaN0IWQ73826AXtySRcF4jiFW0_sj2ABUydavhm3MtA/exec';
   var FRONT_X=0,FRONT_Y=30*Math.PI/180,FRONT_Z=0;
   var MIN_Z=2,MAX_Z=8,DEFAULT_Z=5;
   var GLB_URL='https://cdn.jsdelivr.net/gh/seanenterp-afk/my-3d-model@main/Untitled.glb';
@@ -226,7 +226,6 @@
   animate();
 
   canvas.addEventListener('wheel',function(e){e.preventDefault();camera.position.z=Math.min(MAX_Z,Math.max(MIN_Z,camera.position.z+e.deltaY*0.01));},{passive:false});
-
   window.snapToFront=function(){if(!model)return;autoRotate=false;snapAnim=true;clearTimeout(idleTimer);var btn=document.getElementById('snapBtn');btn.classList.add('snapping');btn.textContent='snapping...';};
 
   function applyTextureToModel(m,tex){if(!m)return;m.traverse(function(c){if(c.isMesh){c.material.map=tex;c.material.color.set(tex?0xffffff:0xcccccc);c.material.needsUpdate=true;}});}
@@ -292,14 +291,6 @@
     };
     reader.readAsDataURL(file);selectSlot(idx);snapToFront();
   };
-
-  var isDragging=false,prevX=0,prevY=0;
-  canvas.addEventListener('mousedown',function(e){isDragging=true;autoRotate=false;snapAnim=false;prevX=e.clientX;prevY=e.clientY;});
-  window.addEventListener('mousemove',function(e){if(!isDragging||!model)return;model.rotation.y+=(e.clientX-prevX)*0.01;model.rotation.x+=(e.clientY-prevY)*0.01;prevX=e.clientX;prevY=e.clientY;});
-  window.addEventListener('mouseup',function(){isDragging=false;clearTimeout(idleTimer);idleTimer=setTimeout(function(){autoRotate=true;},3000);});
-  canvas.addEventListener('touchstart',function(e){isDragging=true;autoRotate=false;snapAnim=false;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;},{passive:true});
-  canvas.addEventListener('touchmove',function(e){if(!isDragging||!model)return;model.rotation.y+=(e.touches[0].clientX-prevX)*0.01;model.rotation.x+=(e.touches[0].clientY-prevY)*0.01;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;},{passive:true});
-  canvas.addEventListener('touchend',function(){isDragging=false;});
 
   var miniRenderers=[],miniScenes=[],miniCameras=[],miniModels=[];
   var miniAnimRunning=false;
@@ -386,24 +377,26 @@
     var msg=document.getElementById('submittingMsg');
     btn.disabled=true;msg.style.display='block';
     var data={
-      access_key:WEB3FORMS_KEY,
-      subject:'New Custom Orrery Order — '+name,
-      name:name,email:email,
-      'Planet 1 filename':fileNames[0]||'not uploaded',
-      'Planet 2 filename':fileNames[1]||'not uploaded',
-      'Planet 3 filename':fileNames[2]||'not uploaded',
-      'Planet 4 filename':fileNames[3]||'not uploaded',
-      message:'New 4 Planet Custom Orrery order from '+name+' ('+email+'). Files: 1='+fileNames[0]+', 2='+fileNames[1]+', 3='+fileNames[2]+', 4='+fileNames[3]
+      name:name,
+      email:email,
+      planet1:fileNames[0]||'not uploaded',
+      planet2:fileNames[1]||'not uploaded',
+      planet3:fileNames[2]||'not uploaded',
+      planet4:fileNames[3]||'not uploaded'
     };
-    fetch('https://api.web3forms.com/submit',{
+    fetch(SCRIPT_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify(data)
-    }).then(function(r){return r.json();}).then(function(res){
+    }).then(function(){
       msg.style.display='none';
-      if(res.success){document.getElementById('reviewContent').style.display='none';document.getElementById('successMsg').style.display='block';}
-      else{btn.disabled=false;alert('Something went wrong. Please try again.');}
-    }).catch(function(){msg.style.display='none';btn.disabled=false;alert('Could not send order. Please check your connection and try again.');});
+      document.getElementById('reviewContent').style.display='none';
+      document.getElementById('successMsg').style.display='block';
+    }).catch(function(){
+      msg.style.display='none';btn.disabled=false;
+      alert('Could not send order. Please check your connection and try again.');
+    });
   };
 
   var ls=document.createElement('script');

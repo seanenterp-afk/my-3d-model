@@ -7,34 +7,33 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: transparent; font-family: sans-serif; }
-  .wrap { background: #0a0a14; border-radius: 16px; overflow: hidden; }
+  .wrap { background: #0a0a14; border-radius: 16px; overflow: hidden; position: relative; }
   .page { display: none; }
   .page.active { display: flex; min-height: 620px; }
-  .left-panel { width: 45%; position: relative; border-right: 0.5px solid rgba(255,255,255,0.07); overflow: hidden; background: #000; display: flex; flex-direction: column; }
-  .right-panel { width: 55%; padding: 2rem 1.75rem; overflow-y: auto; display: flex; flex-direction: column; }
-  .stars { position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse at center, #0d1b2a 0%, #000005 100%); }
+  .left-panel { width: 45%; position: relative; border-right: 0.5px solid rgba(255,255,255,0.07); overflow: hidden; background: #000; display: flex; flex-direction: column; z-index: 1; }
+  .right-panel { width: 55%; padding: 2rem 1.75rem; overflow-y: auto; display: flex; flex-direction: column; position: relative; z-index: 1; }
+  .stars { position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse at center, #0d1b2a 0%, #000005 100%); pointer-events: none; }
   .stars::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 10% 15%,#fff 100%,transparent),radial-gradient(1px 1px at 25% 60%,#fff 100%,transparent),radial-gradient(1.5px 1.5px at 40% 30%,#fff 100%,transparent),radial-gradient(1px 1px at 55% 75%,#fff 100%,transparent),radial-gradient(1px 1px at 70% 10%,#fff 100%,transparent),radial-gradient(1.5px 1.5px at 80% 50%,#fff 100%,transparent),radial-gradient(1px 1px at 90% 85%,#fff 100%,transparent),radial-gradient(1px 1px at 15% 90%,#fff 100%,transparent); opacity: 1; }
   .stars::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 8% 22%,#aad4ff 100%,transparent),radial-gradient(1px 1px at 30% 80%,#aad4ff 100%,transparent),radial-gradient(1px 1px at 52% 48%,#ffd6aa 100%,transparent),radial-gradient(1px 1px at 68% 35%,#aad4ff 100%,transparent); opacity: 1; animation: twinkle 4s ease-in-out infinite alternate; }
   @keyframes twinkle { 0%{opacity:0.7} 100%{opacity:1} }
   .glow-ring { position: absolute; inset: 0; z-index: 2; pointer-events: none; box-shadow: inset 0 0 40px rgba(255,255,255,0.02),0 0 30px rgba(180,210,255,0.08); }
   #modelCanvas { display: block; width: 100%; flex: 1; cursor: grab; touch-action: none; position: relative; z-index: 1; min-height: 240px; }
   #modelCanvas:active { cursor: grabbing; }
-  .zoom-hint { position: absolute; bottom: 0; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.18); font-size: 10px; padding-bottom: 4px; z-index: 3; letter-spacing: 0.04em; pointer-events: none; }
+  .zoom-hint { position: relative; z-index: 3; text-align: center; color: rgba(255,255,255,0.35); font-size: 10px; padding: 4px 0; letter-spacing: 0.04em; }
   .control-panel { position: relative; z-index: 3; background: rgba(255,255,255,0.04); border-top: 0.5px solid rgba(255,255,255,0.08); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
   .panel-top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
-  .panel-section-label { font-size: 10px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.08em; }
-  .snap-link { background: none; border: none; color: #fff; font-size: 12px; cursor: pointer; font-family: sans-serif; padding: 0; opacity: 0.8; transition: opacity 0.2s; }
-  .snap-link:hover { opacity: 1; }
-  .snap-link.snapping { opacity: 0.5; }
+  .panel-section-label { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; }
+  .snap-link { background: rgba(255,255,255,0.1); border: 0.5px solid rgba(255,255,255,0.25); border-radius: 5px; color: #fff; font-size: 11px; cursor: pointer; font-family: sans-serif; padding: 4px 10px; transition: background 0.2s; }
+  .snap-link:hover { background: rgba(255,255,255,0.2); }
   .tex-row { display: flex; align-items: center; gap: 8px; }
-  .tex-row span { font-size: 10px; color: rgba(255,255,255,0.35); width: 38px; flex-shrink: 0; letter-spacing: 0.04em; }
+  .tex-row span { font-size: 10px; color: rgba(255,255,255,0.45); width: 38px; flex-shrink: 0; }
   .tex-row input[type=range] { flex: 1; accent-color: rgba(255,255,255,0.6); height: 2px; }
-  .tex-val { font-size: 10px; color: rgba(255,255,255,0.3); width: 28px; text-align: right; flex-shrink: 0; }
+  .tex-val { font-size: 10px; color: rgba(255,255,255,0.45); width: 28px; text-align: right; flex-shrink: 0; }
   .active-indicator { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px 8px; position: relative; z-index: 3; }
   .active-dots { display: flex; gap: 8px; }
   .active-dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0.3; transition: opacity 0.2s, transform 0.2s; cursor: pointer; }
   .active-dot.active { opacity: 1; transform: scale(1.3); }
-  .panel-hint { color: rgba(255,255,255,0.2); font-size: 10px; letter-spacing: 0.04em; }
+  .panel-hint { color: rgba(255,255,255,0.3); font-size: 10px; }
   .form-title { color: #fff; font-size: 20px; font-weight: 500; margin-bottom: 0.3rem; }
   .form-sub { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 1.4rem; }
   .divider { width: 32px; height: 1px; background: rgba(255,255,255,0.15); margin-bottom: 1.4rem; }
@@ -49,24 +48,27 @@
   .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .upload-slot { background: rgba(255,255,255,0.04); border: 0.5px dashed rgba(255,255,255,0.18); border-radius: 10px; padding: 0.9rem 0.8rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
   .upload-slot:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
-  .upload-slot.has-file { border-style: solid; }
+  .upload-slot.has-file { border-style: solid; border-color: rgba(255,255,255,0.3); }
   .upload-slot.selected { box-shadow: 0 0 0 1.5px #fff; border-style: solid; }
-  .upload-slot input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-slot.missing { border-color: #e05555; border-style: solid; }
+  .upload-slot input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2; }
   .slot-planet-dot { width: 18px; height: 18px; border-radius: 50%; margin: 0 auto 5px; transition: transform 0.2s; }
   .upload-slot.selected .slot-planet-dot { transform: scale(1.2); }
   .slot-label { color: rgba(255,255,255,0.4); font-size: 11px; }
   .slot-name { color: rgba(255,255,255,0.7); font-size: 10px; margin-top: 3px; word-break: break-all; }
-  .preview-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin: 0 auto 4px; display: block; }
-  .viewing-badge { display: none; position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.12); border-radius: 3px; font-size: 9px; color: rgba(255,255,255,0.7); padding: 2px 4px; pointer-events: none; }
+  .preview-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin: 0 auto 4px; display: block; pointer-events: none; }
+  .viewing-badge { display: none; position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.12); border-radius: 3px; font-size: 9px; color: rgba(255,255,255,0.7); padding: 2px 4px; pointer-events: none; z-index: 1; }
   .upload-slot.selected .viewing-badge { display: block; }
+  .images-error { color: #e05555; font-size: 11px; margin-top: 8px; display: none; }
+  .images-error.visible { display: block; }
   .btn-row { margin-top: auto; padding-top: 1.2rem; display: flex; gap: 8px; }
   .btn-primary { flex: 1; background: #fff; color: #0a0a14; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: sans-serif; transition: opacity 0.2s; }
   .btn-primary:hover { opacity: 0.88; }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-secondary { flex: 1; background: transparent; color: rgba(255,255,255,0.6); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px; font-size: 14px; cursor: pointer; font-family: sans-serif; transition: background 0.2s; }
-  .btn-secondary:hover { background: rgba(255,255,255,0.05); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary { flex: 1; background: rgba(255,255,255,0.1); color: #fff; border: 0.5px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 12px; font-size: 14px; cursor: pointer; font-family: sans-serif; transition: background 0.2s; }
+  .btn-secondary:hover { background: rgba(255,255,255,0.18); }
   .note { color: rgba(255,255,255,0.25); font-size: 11px; text-align: center; margin-top: 0.6rem; }
-  .review-page { flex-direction: column; padding: 2rem; background: #0a0a14; min-height: 620px; }
+  .review-page { flex-direction: column; padding: 2rem; background: #0a0a14; min-height: 620px; position: relative; z-index: 1; }
   .review-title { color: #fff; font-size: 20px; font-weight: 500; text-align: center; margin-bottom: 0.3rem; }
   .review-sub { color: rgba(255,255,255,0.4); font-size: 13px; text-align: center; margin-bottom: 1.5rem; }
   .models-row { display: flex; gap: 12px; justify-content: center; margin-bottom: 1.5rem; }
@@ -128,13 +130,14 @@
         <div class="field-error" id="err-email">Please enter a valid email address</div>
       </div>
       <div class="field">
-        <label>Planet images — upload 4</label>
+        <label>Planet images — all 4 required</label>
         <div class="upload-grid">
-          <div class="upload-slot selected" id="slot0" onclick="selectSlot(0)"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(0,this)" onclick="event.stopPropagation()"><div class="slot-planet-dot" id="dot0" style="background:#e8a87c"></div><div class="slot-label">Planet 1</div><div class="slot-name" id="name0"></div></div>
-          <div class="upload-slot" id="slot1" onclick="selectSlot(1)"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(1,this)" onclick="event.stopPropagation()"><div class="slot-planet-dot" id="dot1" style="background:#7cb9e8"></div><div class="slot-label">Planet 2</div><div class="slot-name" id="name1"></div></div>
-          <div class="upload-slot" id="slot2" onclick="selectSlot(2)"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(2,this)" onclick="event.stopPropagation()"><div class="slot-planet-dot" id="dot2" style="background:#b8e87c"></div><div class="slot-label">Planet 3</div><div class="slot-name" id="name2"></div></div>
-          <div class="upload-slot" id="slot3" onclick="selectSlot(3)"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(3,this)" onclick="event.stopPropagation()"><div class="slot-planet-dot" id="dot3" style="background:#e87cb8"></div><div class="slot-label">Planet 4</div><div class="slot-name" id="name3"></div></div>
+          <div class="upload-slot selected" id="slot0"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(0,this)"><div class="slot-planet-dot" id="dot0" style="background:#e8a87c"></div><div class="slot-label">Planet 1</div><div class="slot-name" id="name0"></div></div>
+          <div class="upload-slot" id="slot1"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(1,this)"><div class="slot-planet-dot" id="dot1" style="background:#7cb9e8"></div><div class="slot-label">Planet 2</div><div class="slot-name" id="name1"></div></div>
+          <div class="upload-slot" id="slot2"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(2,this)"><div class="slot-planet-dot" id="dot2" style="background:#b8e87c"></div><div class="slot-label">Planet 3</div><div class="slot-name" id="name2"></div></div>
+          <div class="upload-slot" id="slot3"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(3,this)"><div class="slot-planet-dot" id="dot3" style="background:#e87cb8"></div><div class="slot-label">Planet 4</div><div class="slot-name" id="name3"></div></div>
         </div>
+        <div class="images-error" id="err-images">Please upload an image for all 4 planets</div>
       </div>
       <div class="btn-row"><button class="btn-primary" onclick="goToReview()">Review my order →</button></div>
       <p class="note">We'll be in touch within 1–2 business days</p>
@@ -175,6 +178,13 @@
   var fileNames=[null,null,null,null];
   var texSettings=[{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0}];
 
+  [0,1,2,3].forEach(function(i){
+    document.getElementById('slot'+i).addEventListener('click',function(e){
+      if(e.target.tagName==='INPUT')return;
+      selectSlot(i);
+    });
+  });
+
   function isValidEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());}
 
   window.validateName=function(){
@@ -195,6 +205,15 @@
     return ok;
   };
 
+  function validateImages(){
+    var allUploaded=fileNames.every(function(n){return n!==null;});
+    document.getElementById('err-images').classList.toggle('visible',!allUploaded);
+    for(var i=0;i<4;i++){
+      document.getElementById('slot'+i).classList.toggle('missing',!fileNames[i]);
+    }
+    return allUploaded;
+  }
+
   var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.outputEncoding=THREE.sRGBEncoding;
@@ -210,23 +229,36 @@
   function resizeRenderer(){var w=canvas.clientWidth,h=canvas.clientHeight;if(w>0&&h>0){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}}
   function lerpAngle(a,b,t){var d=b-a;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;return a+d*t;}
 
-  function animate(){
-    requestAnimationFrame(animate);
+  function animLoop(){
+    requestAnimationFrame(animLoop);
     if(snapAnim&&model){
       model.rotation.x=lerpAngle(model.rotation.x,FRONT_X,0.12);
       model.rotation.y=lerpAngle(model.rotation.y,FRONT_Y,0.12);
       model.rotation.z=lerpAngle(model.rotation.z,FRONT_Z,0.12);
       if(Math.abs(model.rotation.x-FRONT_X)<0.001&&Math.abs(model.rotation.y-FRONT_Y)<0.001&&Math.abs(model.rotation.z-FRONT_Z)<0.001){
         model.rotation.set(FRONT_X,FRONT_Y,FRONT_Z);snapAnim=false;autoRotate=false;
-        var btn=document.getElementById('snapBtn');btn.classList.remove('snapping');btn.textContent='snap to front view';
+        var btn=document.getElementById('snapBtn');btn.textContent='snap to front view';
       }
     } else if(autoRotate&&model){model.rotation.y+=0.002;}
     resizeRenderer();renderer.render(scene,camera);
   }
-  animate();
+  animLoop();
 
   canvas.addEventListener('wheel',function(e){e.preventDefault();camera.position.z=Math.min(MAX_Z,Math.max(MIN_Z,camera.position.z+e.deltaY*0.01));},{passive:false});
-  window.snapToFront=function(){if(!model)return;autoRotate=false;snapAnim=true;clearTimeout(idleTimer);var btn=document.getElementById('snapBtn');btn.classList.add('snapping');btn.textContent='snapping...';};
+
+  var isDragging=false,prevX=0,prevY=0;
+  canvas.addEventListener('mousedown',function(e){isDragging=true;autoRotate=false;snapAnim=false;prevX=e.clientX;prevY=e.clientY;e.preventDefault();});
+  window.addEventListener('mousemove',function(e){if(!isDragging||!model)return;model.rotation.y+=(e.clientX-prevX)*0.01;model.rotation.x+=(e.clientY-prevY)*0.01;prevX=e.clientX;prevY=e.clientY;});
+  window.addEventListener('mouseup',function(){if(!isDragging)return;isDragging=false;clearTimeout(idleTimer);idleTimer=setTimeout(function(){autoRotate=true;},3000);});
+  canvas.addEventListener('touchstart',function(e){isDragging=true;autoRotate=false;snapAnim=false;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;},{passive:true});
+  canvas.addEventListener('touchmove',function(e){if(!isDragging||!model)return;model.rotation.y+=(e.touches[0].clientX-prevX)*0.01;model.rotation.x+=(e.touches[0].clientY-prevY)*0.01;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;},{passive:true});
+  canvas.addEventListener('touchend',function(){isDragging=false;});
+
+  window.snapToFront=function(){
+    if(!model)return;
+    autoRotate=false;snapAnim=true;clearTimeout(idleTimer);
+    document.getElementById('snapBtn').textContent='snapping...';
+  };
 
   function applyTextureToModel(m,tex){if(!m)return;m.traverse(function(c){if(c.isMesh){c.material.map=tex;c.material.color.set(tex?0xffffff:0xcccccc);c.material.needsUpdate=true;}});}
 
@@ -254,11 +286,14 @@
 
   function loadSlotControls(idx){
     var s=texSettings[idx];
-    document.getElementById('ctrlRotate').value=s.rotate;document.getElementById('ctrlScale').value=s.scale;
-    document.getElementById('ctrlX').value=s.x;document.getElementById('ctrlY').value=s.y;
+    document.getElementById('ctrlRotate').value=s.rotate;
+    document.getElementById('ctrlScale').value=s.scale;
+    document.getElementById('ctrlX').value=s.x;
+    document.getElementById('ctrlY').value=s.y;
     document.getElementById('valRotate').textContent=Math.round(s.rotate)+'°';
     document.getElementById('valScale').textContent=s.scale.toFixed(1);
-    document.getElementById('valX').textContent=s.x.toFixed(2);document.getElementById('valY').textContent=s.y.toFixed(2);
+    document.getElementById('valX').textContent=s.x.toFixed(2);
+    document.getElementById('valY').textContent=s.y.toFixed(2);
   }
 
   window.selectSlot=function(idx){
@@ -275,21 +310,28 @@
     fileNames[idx]=file.name;
     var slot=document.getElementById('slot'+idx);
     slot.classList.add('has-file');
+    slot.classList.remove('missing');
     document.getElementById('name'+idx).textContent=file.name.length>16?file.name.substring(0,14)+'...':file.name;
     var reader=new FileReader();
     reader.onload=function(e){
       planetDataURLs[idx]=e.target.result;
       var old=slot.querySelector('.preview-img');if(old)old.remove();
       var img=document.createElement('img');img.className='preview-img';img.src=e.target.result;
-      var dot=document.getElementById('dot'+idx);if(dot){dot.style.display='none';slot.insertBefore(img,dot);}
+      var dot=document.getElementById('dot'+idx);
+      if(dot){dot.style.display='none';slot.insertBefore(img,dot.nextSibling);}
       var texLoader=new THREE.TextureLoader();
       texLoader.load(e.target.result,function(tex){
-        tex.encoding=THREE.sRGBEncoding;tex.wrapS=THREE.ClampToEdgeWrapping;tex.wrapT=THREE.ClampToEdgeWrapping;
+        tex.encoding=THREE.sRGBEncoding;
+        tex.wrapS=THREE.ClampToEdgeWrapping;tex.wrapT=THREE.ClampToEdgeWrapping;
         planetTextures[idx]=tex;
-        if(activeSlot===idx){applyTextureToModel(model,tex);applySettings(idx);document.getElementById('panelHint').textContent='planet '+(idx+1)+' previewing';}
+        selectSlot(idx);
       });
     };
-    reader.readAsDataURL(file);selectSlot(idx);snapToFront();
+    reader.readAsDataURL(file);
+    snapToFront();
+    if(fileNames.every(function(n){return n!==null;})){
+      document.getElementById('err-images').classList.remove('visible');
+    }
   };
 
   var miniRenderers=[],miniScenes=[],miniCameras=[],miniModels=[];
@@ -352,17 +394,19 @@
   }
 
   window.goToReview=function(){
-    var nameOk=validateName(),emailOk=validateEmail();
-    if(!nameOk){document.getElementById('f-name').classList.add('error');document.getElementById('err-name').classList.add('visible');}
-    if(!emailOk){document.getElementById('f-email').classList.add('error');document.getElementById('err-email').classList.add('visible');}
-    if(!nameOk||!emailOk)return;
+    var nameOk=validateName();
+    var emailOk=validateEmail();
+    var imagesOk=validateImages();
+    if(!nameOk||!emailOk||!imagesOk)return;
     var name=document.getElementById('f-name').value.trim();
     var email=document.getElementById('f-email').value.trim();
-    var uploadedNames=fileNames.map(function(n){return n||'not uploaded';}).join(', ');
     document.getElementById('reviewFields').innerHTML=
       '<div class="review-row"><span>Name</span><span>'+name+'</span></div>'+
       '<div class="review-row"><span>Email</span><span>'+email+'</span></div>'+
-      '<div class="review-row"><span>Planet files</span><span>'+uploadedNames+'</span></div>';
+      '<div class="review-row"><span>Planet 1</span><span>'+fileNames[0]+'</span></div>'+
+      '<div class="review-row"><span>Planet 2</span><span>'+fileNames[1]+'</span></div>'+
+      '<div class="review-row"><span>Planet 3</span><span>'+fileNames[2]+'</span></div>'+
+      '<div class="review-row"><span>Planet 4</span><span>'+fileNames[3]+'</span></div>';
     document.getElementById('page1').classList.remove('active');
     document.getElementById('page2').classList.add('active');
     buildMiniViewers();
@@ -376,20 +420,9 @@
     var btn=document.getElementById('submitBtn');
     var msg=document.getElementById('submittingMsg');
     btn.disabled=true;msg.style.display='block';
-    var data={
-      name:name,
-      email:email,
-      planet1:fileNames[0]||'not uploaded',
-      planet2:fileNames[1]||'not uploaded',
-      planet3:fileNames[2]||'not uploaded',
-      planet4:fileNames[3]||'not uploaded'
-    };
-    fetch(SCRIPT_URL,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(data)
-    }).then(function(){
+    var data={name:name,email:email,planet1:fileNames[0],planet2:fileNames[1],planet3:fileNames[2],planet4:fileNames[3]};
+    fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+    .then(function(){
       msg.style.display='none';
       document.getElementById('reviewContent').style.display='none';
       document.getElementById('successMsg').style.display='block';

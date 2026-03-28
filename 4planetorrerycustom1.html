@@ -46,7 +46,7 @@
   .field-error { color: #e05555; font-size: 11px; margin-top: 5px; display: none; }
   .field-error.visible { display: block; }
   .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .upload-slot { background: rgba(255,255,255,0.04); border: 0.5px dashed rgba(255,255,255,0.18); border-radius: 10px; padding: 0.9rem 0.8rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
+  .upload-slot { background: rgba(255,255,255,0.04); border: 0.5px dashed rgba(255,255,255,0.18); border-radius: 10px; padding: 0.9rem 0.8rem; text-align: center; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; }
   .upload-slot:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
   .upload-slot.has-file { border-style: solid; border-color: rgba(255,255,255,0.3); }
   .upload-slot.selected { box-shadow: 0 0 0 1.5px #fff; border-style: solid; }
@@ -59,11 +59,14 @@
   .uc-btn { background: rgba(255,255,255,0.08); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; font-size: 11px; padding: 6px 10px; cursor: pointer; font-family: sans-serif; transition: background 0.2s; width: 100%; }
   .uc-btn:hover { background: rgba(255,255,255,0.15); }
   .uc-btn.uploaded { background: rgba(76,175,61,0.15); border-color: #4caf7d; color: #4caf7d; }
+  .uc-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .preview-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; margin: 0 auto 4px; display: block; }
   .viewing-badge { display: none; position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.12); border-radius: 3px; font-size: 9px; color: rgba(255,255,255,0.7); padding: 2px 4px; pointer-events: none; }
   .upload-slot.selected .viewing-badge { display: block; }
   .images-error { color: #e05555; font-size: 11px; margin-top: 8px; display: none; }
   .images-error.visible { display: block; }
+  .uploading-indicator { color: rgba(255,255,255,0.5); font-size: 10px; margin-top: 3px; display: none; }
+  .uploading-indicator.visible { display: block; }
   .btn-row { margin-top: auto; padding-top: 1.2rem; display: flex; gap: 8px; }
   .btn-primary { flex: 1; background: #fff; color: #0a0a14; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: sans-serif; transition: opacity 0.2s; }
   .btn-primary:hover { opacity: 0.88; }
@@ -90,7 +93,6 @@
   .check-circle { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); margin: 0 auto; display: flex; align-items: center; justify-content: center; }
   .submitting-msg { color: rgba(255,255,255,0.4); font-size: 12px; text-align: center; margin-top: 0.5rem; display: none; }
 </style>
-<script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="wrap">
@@ -141,29 +143,37 @@
             <div class="viewing-badge">viewing</div>
             <div class="slot-planet-dot" id="dot0" style="background:#e8a87c"></div>
             <div class="slot-label">Planet 1</div>
-            <button class="uc-btn" id="ucbtn0" onclick="openUpload(0)">Upload image</button>
+            <input type="file" accept="image/*" id="file0" style="display:none" onchange="handleImageKit(0,this)">
+            <button class="uc-btn" id="ucbtn0" onclick="document.getElementById('file0').click()">Upload image</button>
             <div class="slot-status" id="status0">no image yet</div>
+            <div class="uploading-indicator" id="uploading0">uploading...</div>
           </div>
           <div class="upload-slot" id="slot1">
             <div class="viewing-badge">viewing</div>
             <div class="slot-planet-dot" id="dot1" style="background:#7cb9e8"></div>
             <div class="slot-label">Planet 2</div>
-            <button class="uc-btn" id="ucbtn1" onclick="openUpload(1)">Upload image</button>
+            <input type="file" accept="image/*" id="file1" style="display:none" onchange="handleImageKit(1,this)">
+            <button class="uc-btn" id="ucbtn1" onclick="document.getElementById('file1').click()">Upload image</button>
             <div class="slot-status" id="status1">no image yet</div>
+            <div class="uploading-indicator" id="uploading1">uploading...</div>
           </div>
           <div class="upload-slot" id="slot2">
             <div class="viewing-badge">viewing</div>
             <div class="slot-planet-dot" id="dot2" style="background:#b8e87c"></div>
             <div class="slot-label">Planet 3</div>
-            <button class="uc-btn" id="ucbtn2" onclick="openUpload(2)">Upload image</button>
+            <input type="file" accept="image/*" id="file2" style="display:none" onchange="handleImageKit(2,this)">
+            <button class="uc-btn" id="ucbtn2" onclick="document.getElementById('file2').click()">Upload image</button>
             <div class="slot-status" id="status2">no image yet</div>
+            <div class="uploading-indicator" id="uploading2">uploading...</div>
           </div>
           <div class="upload-slot" id="slot3">
             <div class="viewing-badge">viewing</div>
             <div class="slot-planet-dot" id="dot3" style="background:#e87cb8"></div>
             <div class="slot-label">Planet 4</div>
-            <button class="uc-btn" id="ucbtn3" onclick="openUpload(3)">Upload image</button>
+            <input type="file" accept="image/*" id="file3" style="display:none" onchange="handleImageKit(3,this)">
+            <button class="uc-btn" id="ucbtn3" onclick="document.getElementById('file3').click()">Upload image</button>
             <div class="slot-status" id="status3">no image yet</div>
+            <div class="uploading-indicator" id="uploading3">uploading...</div>
           </div>
         </div>
         <div class="images-error" id="err-images">Please upload an image for all 4 planets</div>
@@ -198,7 +208,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
-  var UC_KEY='d9cb730cdc71f1a5ffa0';
+  var IK_PUBLIC_KEY='public_m3XLUVKk09nTr8rl6vVogCMPf7g=';
   var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxdCjOodxl7ja68Wmive9gu-UvIaN0IWQ73826AXtySRcF4jiFW0_sj2ABUydavhm3MtA/exec';
   var FRONT_X=0,FRONT_Y=30*Math.PI/180,FRONT_Z=0;
   var MIN_Z=2,MAX_Z=8,DEFAULT_Z=5;
@@ -209,83 +219,74 @@
   var planetURLs=[null,null,null,null];
   var texSettings=[{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0}];
 
-  window.openUpload=function(idx){
-    var widget=uploadcare.openDialog(null,{publicKey:UC_KEY,imagesOnly:true});
-    widget.done(function(file){
-      file.promise().done(function(info){
-        var url=info.cdnUrl;
-        planetURLs[idx]=url;
-        var slot=document.getElementById('slot'+idx);
-        slot.classList.add('has-file');
-        slot.classList.remove('missing');
-        var btn=document.getElementById('ucbtn'+idx);
-        btn.textContent='Change image';
-        btn.classList.add('uploaded');
-        var status=document.getElementById('status'+idx);
-        status.textContent='uploaded';
-        status.classList.add('done');
-        var dot=document.getElementById('dot'+idx);
-        var old=slot.querySelector('.preview-img');if(old)old.remove();
-        var img=document.createElement('img');
-        img.className='preview-img';
-        img.src=url+'-/resize/64x64/';
-        if(dot){dot.style.display='none';slot.insertBefore(img,dot.nextSibling);}
-        var texLoader=new THREE.TextureLoader();
-        texLoader.load(url+'-/format/jpeg/',function(tex){
-          tex.encoding=THREE.sRGBEncoding;
-          tex.wrapS=THREE.ClampToEdgeWrapping;
-          tex.wrapT=THREE.ClampToEdgeWrapping;
-          planetTextures[idx]=tex;
-          selectSlot(idx);
-        });
-        if(planetURLs.every(function(u){return u!==null;})){
-          document.getElementById('err-images').classList.remove('visible');
-        }
-      });
+  window.handleImageKit=function(idx,input){
+    var file=input.files[0];if(!file)return;
+    var btn=document.getElementById('ucbtn'+idx);
+    var uploadingEl=document.getElementById('uploading'+idx);
+    var statusEl=document.getElementById('status'+idx);
+    btn.disabled=true;
+    uploadingEl.classList.add('visible');
+    statusEl.textContent='';
+    var localURL=URL.createObjectURL(file);
+    var texLoader=new THREE.TextureLoader();
+    texLoader.load(localURL,function(tex){
+      tex.encoding=THREE.sRGBEncoding;
+      tex.wrapS=THREE.ClampToEdgeWrapping;
+      tex.wrapT=THREE.ClampToEdgeWrapping;
+      planetTextures[idx]=tex;
+      selectSlot(idx);
     });
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var slot=document.getElementById('slot'+idx);
+      var dot=document.getElementById('dot'+idx);
+      var old=slot.querySelector('.preview-img');if(old)old.remove();
+      var img=document.createElement('img');
+      img.className='preview-img';img.src=e.target.result;
+      if(dot){dot.style.display='none';slot.insertBefore(img,dot.nextSibling);}
+    };
+    reader.readAsDataURL(file);
+    var formData=new FormData();
+    formData.append('file',file);
+    formData.append('publicKey',IK_PUBLIC_KEY);
+    formData.append('fileName','planet'+(idx+1)+'_'+Date.now());
+    formData.append('folder','/orrery-orders/');
+    fetch('https://upload.imagekit.io/api/v1/files/upload',{method:'POST',body:formData})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      uploadingEl.classList.remove('visible');
+      if(res.url){
+        planetURLs[idx]=res.url;
+        var slot=document.getElementById('slot'+idx);
+        slot.classList.add('has-file');slot.classList.remove('missing');
+        btn.textContent='Change image';btn.classList.add('uploaded');btn.disabled=false;
+        statusEl.textContent='uploaded';statusEl.classList.add('done');
+        if(planetURLs.every(function(u){return u!==null;})){document.getElementById('err-images').classList.remove('visible');}
+      } else {
+        btn.disabled=false;statusEl.textContent='upload failed — try again';
+      }
+    }).catch(function(){
+      uploadingEl.classList.remove('visible');btn.disabled=false;statusEl.textContent='upload failed — try again';
+    });
+    snapToFront();
   };
 
   [0,1,2,3].forEach(function(i){
     document.getElementById('slot'+i).addEventListener('click',function(e){
-      if(e.target.tagName==='BUTTON')return;
+      if(e.target.tagName==='BUTTON'||e.target.tagName==='INPUT')return;
       selectSlot(i);
     });
   });
 
   function isValidEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());}
-
-  window.validateName=function(){
-    var inp=document.getElementById('f-name');
-    var ok=inp.value.trim().length>0;
-    inp.classList.toggle('error',!ok);inp.classList.toggle('valid',ok);
-    document.getElementById('err-name').classList.toggle('visible',!ok);
-    return ok;
-  };
-
-  window.validateEmail=function(){
-    var inp=document.getElementById('f-email');
-    var val=inp.value.trim();
-    var ok=isValidEmail(val);
-    var empty=val.length===0;
-    inp.classList.toggle('error',!ok&&!empty);inp.classList.toggle('valid',ok);
-    document.getElementById('err-email').classList.toggle('visible',!ok&&!empty);
-    return ok;
-  };
-
-  function validateImages(){
-    var allUploaded=planetURLs.every(function(u){return u!==null;});
-    document.getElementById('err-images').classList.toggle('visible',!allUploaded);
-    for(var i=0;i<4;i++){document.getElementById('slot'+i).classList.toggle('missing',!planetURLs[i]);}
-    return allUploaded;
-  }
+  window.validateName=function(){var inp=document.getElementById('f-name');var ok=inp.value.trim().length>0;inp.classList.toggle('error',!ok);inp.classList.toggle('valid',ok);document.getElementById('err-name').classList.toggle('visible',!ok);return ok;};
+  window.validateEmail=function(){var inp=document.getElementById('f-email');var val=inp.value.trim();var ok=isValidEmail(val);var empty=val.length===0;inp.classList.toggle('error',!ok&&!empty);inp.classList.toggle('valid',ok);document.getElementById('err-email').classList.toggle('visible',!ok&&!empty);return ok;};
+  function validateImages(){var allUploaded=planetURLs.every(function(u){return u!==null;});document.getElementById('err-images').classList.toggle('visible',!allUploaded);for(var i=0;i<4;i++){document.getElementById('slot'+i).classList.toggle('missing',!planetURLs[i]);}return allUploaded;}
 
   var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true});
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.outputEncoding=THREE.sRGBEncoding;
-  renderer.shadowMap.enabled=false;
+  renderer.setPixelRatio(window.devicePixelRatio);renderer.outputEncoding=THREE.sRGBEncoding;renderer.shadowMap.enabled=false;
   var scene=new THREE.Scene();
-  var camera=new THREE.PerspectiveCamera(45,1,0.1,100);
-  camera.position.z=DEFAULT_Z;
+  var camera=new THREE.PerspectiveCamera(45,1,0.1,100);camera.position.z=DEFAULT_Z;
   scene.add(new THREE.AmbientLight(0xffffff,3.0));
   var d1=new THREE.DirectionalLight(0xffffff,0.5);d1.position.set(5,5,5);d1.castShadow=false;scene.add(d1);
   var d2=new THREE.DirectionalLight(0xffffff,0.5);d2.position.set(-5,-3,-5);scene.add(d2);
@@ -300,17 +301,13 @@
       model.rotation.x=lerpAngle(model.rotation.x,FRONT_X,0.12);
       model.rotation.y=lerpAngle(model.rotation.y,FRONT_Y,0.12);
       model.rotation.z=lerpAngle(model.rotation.z,FRONT_Z,0.12);
-      if(Math.abs(model.rotation.x-FRONT_X)<0.001&&Math.abs(model.rotation.y-FRONT_Y)<0.001&&Math.abs(model.rotation.z-FRONT_Z)<0.001){
-        model.rotation.set(FRONT_X,FRONT_Y,FRONT_Z);snapAnim=false;autoRotate=false;
-        document.getElementById('snapBtn').textContent='snap to front view';
-      }
+      if(Math.abs(model.rotation.x-FRONT_X)<0.001&&Math.abs(model.rotation.y-FRONT_Y)<0.001&&Math.abs(model.rotation.z-FRONT_Z)<0.001){model.rotation.set(FRONT_X,FRONT_Y,FRONT_Z);snapAnim=false;autoRotate=false;document.getElementById('snapBtn').textContent='snap to front view';}
     } else if(autoRotate&&model){model.rotation.y+=0.002;}
     resizeRenderer();renderer.render(scene,camera);
   }
   animLoop();
 
   canvas.addEventListener('wheel',function(e){e.preventDefault();camera.position.z=Math.min(MAX_Z,Math.max(MIN_Z,camera.position.z+e.deltaY*0.01));},{passive:false});
-
   var isDragging=false,prevX=0,prevY=0;
   canvas.addEventListener('mousedown',function(e){isDragging=true;autoRotate=false;snapAnim=false;prevX=e.clientX;prevY=e.clientY;e.preventDefault();});
   window.addEventListener('mousemove',function(e){if(!isDragging||!model)return;model.rotation.y+=(e.clientX-prevX)*0.01;model.rotation.x+=(e.clientY-prevY)*0.01;prevX=e.clientX;prevY=e.clientY;});
@@ -320,16 +317,8 @@
   canvas.addEventListener('touchend',function(){isDragging=false;});
 
   window.snapToFront=function(){if(!model)return;autoRotate=false;snapAnim=true;clearTimeout(idleTimer);document.getElementById('snapBtn').textContent='snapping...';};
-
   function applyTextureToModel(m,tex){if(!m)return;m.traverse(function(c){if(c.isMesh){c.material.map=tex;c.material.color.set(tex?0xffffff:0xcccccc);c.material.needsUpdate=true;}});}
-
-  function applySettings(idx){
-    var t=planetTextures[idx];if(!t)return;
-    var s=texSettings[idx];
-    t.wrapS=THREE.ClampToEdgeWrapping;t.wrapT=THREE.ClampToEdgeWrapping;
-    t.repeat.set(s.scale,s.scale);t.offset.set(s.x*(1-s.scale),s.y*(1-s.scale));
-    t.rotation=s.rotate*Math.PI/180;t.center.set(0.5,0.5);t.needsUpdate=true;
-  }
+  function applySettings(idx){var t=planetTextures[idx];if(!t)return;var s=texSettings[idx];t.wrapS=THREE.ClampToEdgeWrapping;t.wrapT=THREE.ClampToEdgeWrapping;t.repeat.set(s.scale,s.scale);t.offset.set(s.x*(1-s.scale),s.y*(1-s.scale));t.rotation=s.rotate*Math.PI/180;t.center.set(0.5,0.5);t.needsUpdate=true;}
 
   window.updateTex=function(){
     var s=texSettings[activeSlot];
@@ -345,17 +334,7 @@
     if(model)applyTextureToModel(model,planetTextures[activeSlot]);
   };
 
-  function loadSlotControls(idx){
-    var s=texSettings[idx];
-    document.getElementById('ctrlRotate').value=s.rotate;
-    document.getElementById('ctrlScale').value=s.scale;
-    document.getElementById('ctrlX').value=s.x;
-    document.getElementById('ctrlY').value=s.y;
-    document.getElementById('valRotate').textContent=Math.round(s.rotate)+'°';
-    document.getElementById('valScale').textContent=s.scale.toFixed(1);
-    document.getElementById('valX').textContent=s.x.toFixed(2);
-    document.getElementById('valY').textContent=s.y.toFixed(2);
-  }
+  function loadSlotControls(idx){var s=texSettings[idx];document.getElementById('ctrlRotate').value=s.rotate;document.getElementById('ctrlScale').value=s.scale;document.getElementById('ctrlX').value=s.x;document.getElementById('ctrlY').value=s.y;document.getElementById('valRotate').textContent=Math.round(s.rotate)+'°';document.getElementById('valScale').textContent=s.scale.toFixed(1);document.getElementById('valX').textContent=s.x.toFixed(2);document.getElementById('valY').textContent=s.y.toFixed(2);}
 
   window.selectSlot=function(idx){
     activeSlot=idx;
@@ -366,8 +345,7 @@
     else{applyTextureToModel(model,null);document.getElementById('panelHint').textContent='no image yet';}
   };
 
-  var miniRenderers=[],miniScenes=[],miniCameras=[],miniModels=[];
-  var miniAnimRunning=false;
+  var miniRenderers=[],miniScenes=[],miniCameras=[],miniModels=[],miniAnimRunning=false;
 
   function buildMiniViewers(){
     var row=document.getElementById('modelsRow');row.innerHTML='';
@@ -380,8 +358,7 @@
       var r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
       r.setPixelRatio(window.devicePixelRatio);r.outputEncoding=THREE.sRGBEncoding;r.shadowMap.enabled=false;
       miniRenderers.push(r);
-      var s=new THREE.Scene();
-      s.add(new THREE.AmbientLight(0xffffff,3.0));
+      var s=new THREE.Scene();s.add(new THREE.AmbientLight(0xffffff,3.0));
       var dl=new THREE.DirectionalLight(0xffffff,0.5);dl.position.set(5,5,5);s.add(dl);
       var dl2=new THREE.DirectionalLight(0xffffff,0.5);dl2.position.set(-5,-3,-5);s.add(dl2);
       miniScenes.push(s);
@@ -393,8 +370,7 @@
       (function miniLoop(){
         requestAnimationFrame(miniLoop);
         for(var i=0;i<4;i++){
-          var cv=miniRenderers[i].domElement;
-          var w=cv.clientWidth,h=cv.clientHeight||w;
+          var cv=miniRenderers[i].domElement;var w=cv.clientWidth,h=cv.clientHeight||w;
           if(w>0&&h>0){miniRenderers[i].setSize(w,h,false);miniCameras[i].aspect=w/h;miniCameras[i].updateProjectionMatrix();}
           if(miniModels[i])miniModels[i].rotation.y+=0.003;
           miniRenderers[i].render(miniScenes[i],miniCameras[i]);
@@ -411,14 +387,7 @@
           var size=box.getSize(new THREE.Vector3());
           fresh.position.sub(center);fresh.scale.setScalar(2/Math.max(size.x,size.y,size.z));
           fresh.rotation.set(FRONT_X,FRONT_Y,FRONT_Z);
-          fresh.traverse(function(c){
-            if(c.isMesh){
-              c.material=c.material.clone();
-              if(planetTextures[idx]){var t=planetTextures[idx].clone();t.needsUpdate=true;c.material.map=t;c.material.color.set(0xffffff);}
-              else{c.material.map=null;c.material.color.set(0xcccccc);}
-              c.material.needsUpdate=true;
-            }
-          });
+          fresh.traverse(function(c){if(c.isMesh){c.material=c.material.clone();if(planetTextures[idx]){var t=planetTextures[idx].clone();t.needsUpdate=true;c.material.map=t;c.material.color.set(0xffffff);}else{c.material.map=null;c.material.color.set(0xcccccc);}c.material.needsUpdate=true;}});
           miniScenes[idx].add(fresh);miniModels[idx]=fresh;
         });
       })(i);
@@ -426,9 +395,7 @@
   }
 
   window.goToReview=function(){
-    var nameOk=validateName();
-    var emailOk=validateEmail();
-    var imagesOk=validateImages();
+    var nameOk=validateName(),emailOk=validateEmail(),imagesOk=validateImages();
     if(!nameOk||!emailOk||!imagesOk)return;
     var name=document.getElementById('f-name').value.trim();
     var email=document.getElementById('f-email').value.trim();
@@ -454,14 +421,8 @@
     btn.disabled=true;msg.style.display='block';
     var data={name:name,email:email,planet1:planetURLs[0],planet2:planetURLs[1],planet3:planetURLs[2],planet4:planetURLs[3]};
     fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
-    .then(function(){
-      msg.style.display='none';
-      document.getElementById('reviewContent').style.display='none';
-      document.getElementById('successMsg').style.display='block';
-    }).catch(function(){
-      msg.style.display='none';btn.disabled=false;
-      alert('Could not send order. Please check your connection and try again.');
-    });
+    .then(function(){msg.style.display='none';document.getElementById('reviewContent').style.display='none';document.getElementById('successMsg').style.display='block';})
+    .catch(function(){msg.style.display='none';btn.disabled=false;alert('Could not send order. Please check your connection and try again.');});
   };
 
   var ls=document.createElement('script');

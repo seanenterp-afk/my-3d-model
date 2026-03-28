@@ -51,13 +51,16 @@
   .upload-slot.has-file { border-style: solid; border-color: rgba(255,255,255,0.3); }
   .upload-slot.selected { box-shadow: 0 0 0 1.5px #fff; border-style: solid; }
   .upload-slot.missing { border-color: #e05555; border-style: solid; }
-  .upload-slot input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2; }
   .slot-planet-dot { width: 18px; height: 18px; border-radius: 50%; margin: 0 auto 5px; transition: transform 0.2s; }
   .upload-slot.selected .slot-planet-dot { transform: scale(1.2); }
-  .slot-label { color: rgba(255,255,255,0.4); font-size: 11px; }
-  .slot-name { color: rgba(255,255,255,0.7); font-size: 10px; margin-top: 3px; word-break: break-all; }
-  .preview-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin: 0 auto 4px; display: block; pointer-events: none; }
-  .viewing-badge { display: none; position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.12); border-radius: 3px; font-size: 9px; color: rgba(255,255,255,0.7); padding: 2px 4px; pointer-events: none; z-index: 1; }
+  .slot-label { color: rgba(255,255,255,0.4); font-size: 11px; margin-bottom: 6px; }
+  .slot-status { color: rgba(255,255,255,0.35); font-size: 10px; margin-top: 4px; }
+  .slot-status.done { color: #4caf7d; }
+  .uc-btn { background: rgba(255,255,255,0.08); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; font-size: 11px; padding: 6px 10px; cursor: pointer; font-family: sans-serif; transition: background 0.2s; width: 100%; }
+  .uc-btn:hover { background: rgba(255,255,255,0.15); }
+  .uc-btn.uploaded { background: rgba(76,175,61,0.15); border-color: #4caf7d; color: #4caf7d; }
+  .preview-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; margin: 0 auto 4px; display: block; }
+  .viewing-badge { display: none; position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.12); border-radius: 3px; font-size: 9px; color: rgba(255,255,255,0.7); padding: 2px 4px; pointer-events: none; }
   .upload-slot.selected .viewing-badge { display: block; }
   .images-error { color: #e05555; font-size: 11px; margin-top: 8px; display: none; }
   .images-error.visible { display: block; }
@@ -78,7 +81,8 @@
   .review-fields { background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
   .review-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 0.5px solid rgba(255,255,255,0.06); font-size: 13px; }
   .review-row:last-child { border-bottom: none; }
-  .review-row span:first-child { color: rgba(255,255,255,0.4); }
+  .review-row span:first-child { color: rgba(255,255,255,0.4); flex-shrink: 0; }
+  .review-row a { color: #7cb9e8; font-size: 12px; word-break: break-all; text-align: right; padding-left: 1rem; }
   .review-row span:last-child { color: #fff; word-break: break-all; text-align: right; padding-left: 1rem; }
   .success-msg { display: none; text-align: center; padding: 3rem 1rem; }
   .success-msg h3 { color: #fff; font-size: 18px; font-weight: 500; margin: 1rem 0 0.5rem; }
@@ -86,6 +90,7 @@
   .check-circle { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); margin: 0 auto; display: flex; align-items: center; justify-content: center; }
   .submitting-msg { color: rgba(255,255,255,0.4); font-size: 12px; text-align: center; margin-top: 0.5rem; display: none; }
 </style>
+<script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
 </head>
 <body>
 <div class="wrap">
@@ -132,14 +137,40 @@
       <div class="field">
         <label>Planet images — all 4 required</label>
         <div class="upload-grid">
-          <div class="upload-slot selected" id="slot0"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(0,this)"><div class="slot-planet-dot" id="dot0" style="background:#e8a87c"></div><div class="slot-label">Planet 1</div><div class="slot-name" id="name0"></div></div>
-          <div class="upload-slot" id="slot1"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(1,this)"><div class="slot-planet-dot" id="dot1" style="background:#7cb9e8"></div><div class="slot-label">Planet 2</div><div class="slot-name" id="name1"></div></div>
-          <div class="upload-slot" id="slot2"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(2,this)"><div class="slot-planet-dot" id="dot2" style="background:#b8e87c"></div><div class="slot-label">Planet 3</div><div class="slot-name" id="name2"></div></div>
-          <div class="upload-slot" id="slot3"><div class="viewing-badge">viewing</div><input type="file" accept="image/*" onchange="handleFile(3,this)"><div class="slot-planet-dot" id="dot3" style="background:#e87cb8"></div><div class="slot-label">Planet 4</div><div class="slot-name" id="name3"></div></div>
+          <div class="upload-slot selected" id="slot0">
+            <div class="viewing-badge">viewing</div>
+            <div class="slot-planet-dot" id="dot0" style="background:#e8a87c"></div>
+            <div class="slot-label">Planet 1</div>
+            <button class="uc-btn" id="ucbtn0" onclick="openUpload(0)">Upload image</button>
+            <div class="slot-status" id="status0">no image yet</div>
+          </div>
+          <div class="upload-slot" id="slot1">
+            <div class="viewing-badge">viewing</div>
+            <div class="slot-planet-dot" id="dot1" style="background:#7cb9e8"></div>
+            <div class="slot-label">Planet 2</div>
+            <button class="uc-btn" id="ucbtn1" onclick="openUpload(1)">Upload image</button>
+            <div class="slot-status" id="status1">no image yet</div>
+          </div>
+          <div class="upload-slot" id="slot2">
+            <div class="viewing-badge">viewing</div>
+            <div class="slot-planet-dot" id="dot2" style="background:#b8e87c"></div>
+            <div class="slot-label">Planet 3</div>
+            <button class="uc-btn" id="ucbtn2" onclick="openUpload(2)">Upload image</button>
+            <div class="slot-status" id="status2">no image yet</div>
+          </div>
+          <div class="upload-slot" id="slot3">
+            <div class="viewing-badge">viewing</div>
+            <div class="slot-planet-dot" id="dot3" style="background:#e87cb8"></div>
+            <div class="slot-label">Planet 4</div>
+            <button class="uc-btn" id="ucbtn3" onclick="openUpload(3)">Upload image</button>
+            <div class="slot-status" id="status3">no image yet</div>
+          </div>
         </div>
         <div class="images-error" id="err-images">Please upload an image for all 4 planets</div>
       </div>
-      <div class="btn-row"><button class="btn-primary" onclick="goToReview()">Review my order →</button></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="goToReview()">Review my order →</button>
+      </div>
       <p class="note">We'll be in touch within 1–2 business days</p>
     </div>
   </div>
@@ -159,7 +190,7 @@
     <div class="success-msg" id="successMsg">
       <div class="check-circle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <h3>Order received</h3>
-      <p>Thanks! We'll be in touch shortly to arrange your planet image files.</p>
+      <p>Thanks! We'll review your planet images and be in touch shortly.</p>
     </div>
   </div>
 </div>
@@ -167,6 +198,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
+  var UC_KEY='d9cb730cdc71f1a5ffa0';
   var SCRIPT_URL='https://script.google.com/macros/s/AKfycbxdCjOodxl7ja68Wmive9gu-UvIaN0IWQ73826AXtySRcF4jiFW0_sj2ABUydavhm3MtA/exec';
   var FRONT_X=0,FRONT_Y=30*Math.PI/180,FRONT_Z=0;
   var MIN_Z=2,MAX_Z=8,DEFAULT_Z=5;
@@ -174,13 +206,48 @@
   var canvas=document.getElementById('modelCanvas');
   var model=null,autoRotate=true,idleTimer,snapAnim=false,activeSlot=0;
   var planetTextures=[null,null,null,null];
-  var planetDataURLs=[null,null,null,null];
-  var fileNames=[null,null,null,null];
+  var planetURLs=[null,null,null,null];
   var texSettings=[{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0},{rotate:0,scale:1,x:0,y:0}];
+
+  window.openUpload=function(idx){
+    var widget=uploadcare.openDialog(null,{publicKey:UC_KEY,imagesOnly:true});
+    widget.done(function(file){
+      file.promise().done(function(info){
+        var url=info.cdnUrl;
+        planetURLs[idx]=url;
+        var slot=document.getElementById('slot'+idx);
+        slot.classList.add('has-file');
+        slot.classList.remove('missing');
+        var btn=document.getElementById('ucbtn'+idx);
+        btn.textContent='Change image';
+        btn.classList.add('uploaded');
+        var status=document.getElementById('status'+idx);
+        status.textContent='uploaded';
+        status.classList.add('done');
+        var dot=document.getElementById('dot'+idx);
+        var old=slot.querySelector('.preview-img');if(old)old.remove();
+        var img=document.createElement('img');
+        img.className='preview-img';
+        img.src=url+'-/resize/64x64/';
+        if(dot){dot.style.display='none';slot.insertBefore(img,dot.nextSibling);}
+        var texLoader=new THREE.TextureLoader();
+        texLoader.load(url+'-/format/jpeg/',function(tex){
+          tex.encoding=THREE.sRGBEncoding;
+          tex.wrapS=THREE.ClampToEdgeWrapping;
+          tex.wrapT=THREE.ClampToEdgeWrapping;
+          planetTextures[idx]=tex;
+          selectSlot(idx);
+        });
+        if(planetURLs.every(function(u){return u!==null;})){
+          document.getElementById('err-images').classList.remove('visible');
+        }
+      });
+    });
+  };
 
   [0,1,2,3].forEach(function(i){
     document.getElementById('slot'+i).addEventListener('click',function(e){
-      if(e.target.tagName==='INPUT')return;
+      if(e.target.tagName==='BUTTON')return;
       selectSlot(i);
     });
   });
@@ -206,11 +273,9 @@
   };
 
   function validateImages(){
-    var allUploaded=fileNames.every(function(n){return n!==null;});
+    var allUploaded=planetURLs.every(function(u){return u!==null;});
     document.getElementById('err-images').classList.toggle('visible',!allUploaded);
-    for(var i=0;i<4;i++){
-      document.getElementById('slot'+i).classList.toggle('missing',!fileNames[i]);
-    }
+    for(var i=0;i<4;i++){document.getElementById('slot'+i).classList.toggle('missing',!planetURLs[i]);}
     return allUploaded;
   }
 
@@ -237,7 +302,7 @@
       model.rotation.z=lerpAngle(model.rotation.z,FRONT_Z,0.12);
       if(Math.abs(model.rotation.x-FRONT_X)<0.001&&Math.abs(model.rotation.y-FRONT_Y)<0.001&&Math.abs(model.rotation.z-FRONT_Z)<0.001){
         model.rotation.set(FRONT_X,FRONT_Y,FRONT_Z);snapAnim=false;autoRotate=false;
-        var btn=document.getElementById('snapBtn');btn.textContent='snap to front view';
+        document.getElementById('snapBtn').textContent='snap to front view';
       }
     } else if(autoRotate&&model){model.rotation.y+=0.002;}
     resizeRenderer();renderer.render(scene,camera);
@@ -254,11 +319,7 @@
   canvas.addEventListener('touchmove',function(e){if(!isDragging||!model)return;model.rotation.y+=(e.touches[0].clientX-prevX)*0.01;model.rotation.x+=(e.touches[0].clientY-prevY)*0.01;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;},{passive:true});
   canvas.addEventListener('touchend',function(){isDragging=false;});
 
-  window.snapToFront=function(){
-    if(!model)return;
-    autoRotate=false;snapAnim=true;clearTimeout(idleTimer);
-    document.getElementById('snapBtn').textContent='snapping...';
-  };
+  window.snapToFront=function(){if(!model)return;autoRotate=false;snapAnim=true;clearTimeout(idleTimer);document.getElementById('snapBtn').textContent='snapping...';};
 
   function applyTextureToModel(m,tex){if(!m)return;m.traverse(function(c){if(c.isMesh){c.material.map=tex;c.material.color.set(tex?0xffffff:0xcccccc);c.material.needsUpdate=true;}});}
 
@@ -303,35 +364,6 @@
     loadSlotControls(idx);
     if(planetTextures[idx]){applyTextureToModel(model,planetTextures[idx]);applySettings(idx);document.getElementById('panelHint').textContent='planet '+(idx+1)+' previewing';}
     else{applyTextureToModel(model,null);document.getElementById('panelHint').textContent='no image yet';}
-  };
-
-  window.handleFile=function(idx,input){
-    var file=input.files[0];if(!file)return;
-    fileNames[idx]=file.name;
-    var slot=document.getElementById('slot'+idx);
-    slot.classList.add('has-file');
-    slot.classList.remove('missing');
-    document.getElementById('name'+idx).textContent=file.name.length>16?file.name.substring(0,14)+'...':file.name;
-    var reader=new FileReader();
-    reader.onload=function(e){
-      planetDataURLs[idx]=e.target.result;
-      var old=slot.querySelector('.preview-img');if(old)old.remove();
-      var img=document.createElement('img');img.className='preview-img';img.src=e.target.result;
-      var dot=document.getElementById('dot'+idx);
-      if(dot){dot.style.display='none';slot.insertBefore(img,dot.nextSibling);}
-      var texLoader=new THREE.TextureLoader();
-      texLoader.load(e.target.result,function(tex){
-        tex.encoding=THREE.sRGBEncoding;
-        tex.wrapS=THREE.ClampToEdgeWrapping;tex.wrapT=THREE.ClampToEdgeWrapping;
-        planetTextures[idx]=tex;
-        selectSlot(idx);
-      });
-    };
-    reader.readAsDataURL(file);
-    snapToFront();
-    if(fileNames.every(function(n){return n!==null;})){
-      document.getElementById('err-images').classList.remove('visible');
-    }
   };
 
   var miniRenderers=[],miniScenes=[],miniCameras=[],miniModels=[];
@@ -403,10 +435,10 @@
     document.getElementById('reviewFields').innerHTML=
       '<div class="review-row"><span>Name</span><span>'+name+'</span></div>'+
       '<div class="review-row"><span>Email</span><span>'+email+'</span></div>'+
-      '<div class="review-row"><span>Planet 1</span><span>'+fileNames[0]+'</span></div>'+
-      '<div class="review-row"><span>Planet 2</span><span>'+fileNames[1]+'</span></div>'+
-      '<div class="review-row"><span>Planet 3</span><span>'+fileNames[2]+'</span></div>'+
-      '<div class="review-row"><span>Planet 4</span><span>'+fileNames[3]+'</span></div>';
+      '<div class="review-row"><span>Planet 1</span><a href="'+planetURLs[0]+'" target="_blank">view image</a></div>'+
+      '<div class="review-row"><span>Planet 2</span><a href="'+planetURLs[1]+'" target="_blank">view image</a></div>'+
+      '<div class="review-row"><span>Planet 3</span><a href="'+planetURLs[2]+'" target="_blank">view image</a></div>'+
+      '<div class="review-row"><span>Planet 4</span><a href="'+planetURLs[3]+'" target="_blank">view image</a></div>';
     document.getElementById('page1').classList.remove('active');
     document.getElementById('page2').classList.add('active');
     buildMiniViewers();
@@ -420,7 +452,7 @@
     var btn=document.getElementById('submitBtn');
     var msg=document.getElementById('submittingMsg');
     btn.disabled=true;msg.style.display='block';
-    var data={name:name,email:email,planet1:fileNames[0],planet2:fileNames[1],planet3:fileNames[2],planet4:fileNames[3]};
+    var data={name:name,email:email,planet1:planetURLs[0],planet2:planetURLs[1],planet3:planetURLs[2],planet4:planetURLs[3]};
     fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
     .then(function(){
       msg.style.display='none';
